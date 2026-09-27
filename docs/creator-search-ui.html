@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>抖音作者作品搜索</title>
+<style>
+body{margin:0;background:#f5f6f8;color:#171923;font:14px system-ui,"Microsoft YaHei",sans-serif}main{max-width:1100px;margin:32px auto;padding:0 20px}h1{margin-bottom:6px}.muted{color:#697386}.panel{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:18px;box-shadow:0 8px 28px #1f29370d}.grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px}label{display:grid;gap:6px;color:#4b5563}input{padding:11px;border:1px solid #d1d5db;border-radius:8px;font:inherit}button{margin-top:16px;padding:11px 18px;border:0;border-radius:8px;background:#fe2c55;color:white;font-weight:600;cursor:pointer}button:disabled{opacity:.55}.status{margin:14px 0;color:#4b5563}.results{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-top:16px}.card{overflow:hidden;background:#fff;border:1px solid #e5e7eb;border-radius:12px}.card img{width:100%;height:220px;object-fit:cover;background:#eef0f3}.card div{padding:12px}.card a{color:#fe2c55;text-decoration:none}.error{color:#b42318;white-space:pre-wrap}@media(max-width:700px){.grid{grid-template-columns:1fr}}
+</style>
+<main>
+  <h1>抖音作者作品搜索</h1>
+  <p class="muted">调用 TikTokDownloader 的 <code>/douyin/search/creator</code> 接口。</p>
+  <section class="panel">
+    <div class="grid">
+      <label>API 地址<input id="api" value="http://127.0.0.1:5555/douyin/search/creator"></label>
+      <label>作者数字 UID<input id="uid" placeholder="例如 98569634382"></label>
+      <label>关键词<input id="keyword" value="健康"></label>
+    </div>
+    <div class="grid" style="margin-top:12px">
+      <label>API Token（若服务端启用）<input id="token" type="password" placeholder="可留空"></label>
+      <label>Cookie（可留空，使用程序配置）<input id="cookie" type="password"></label>
+      <label>数量<input id="count" type="number" min="5" value="10"></label>
+    </div>
+    <button id="search">开始搜索</button>
+    <div id="status" class="status">等待输入</div>
+  </section>
+  <div id="results" class="results"></div>
+</main>
+<script>
+const $=id=>document.getElementById(id), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+$("search").onclick=async()=>{const btn=$("search");btn.disabled=true;$("results").innerHTML='';$("status").className='status';$("status").textContent='请求中…';try{const headers={'Content-Type':'application/json'};if($("token").value)headers.token=$("token").value;const r=await fetch($("api").value,{method:'POST',headers,body:JSON.stringify({keyword:$("keyword").value,from_user:$("uid").value,count:Number($("count").value),pages:1,cookie:$("cookie").value})});const j=await r.json();if(!r.ok||!j.data)throw new Error(j.detail||j.message||'请求失败');const items=Array.isArray(j.data?.[0])?j.data.flat():j.data;$("status").textContent=`获取 ${items.length} 条结果`;$("results").innerHTML=items.map(x=>`<article class="card"><img src="${esc(x.video?.cover?.url_list?.[0]||x.cover_url||'')}" loading="lazy"><div><b>${esc(x.desc||x.caption||x.title||'无标题')}</b><p class="muted">${esc(x.author?.nickname||x.author||'')}</p><a target="_blank" href="${esc(x.aweme_id?'https://www.douyin.com/video/'+x.aweme_id:x.source_url||'#')}">打开抖音原视频</a></div></article>`).join('')}catch(e){$("status").className='status error';$("status").textContent=e.message+`\n\n如果是跨域错误，请把此页面放到项目静态目录，或用同源地址打开。`}finally{btn.disabled=false}};
+</script>

@@ -10,6 +10,7 @@ from ..interface.collects import (
 )
 from ..interface.comment import Comment, Reply
 from ..interface.comment_tiktok import CommentTikTok, ReplyTikTok
+from ..interface.creator_search import CreatorSearch
 from ..interface.detail import Detail
 from ..interface.detail_tiktok import DetailTikTok
 from ..interface.hashtag import HashTag

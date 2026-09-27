@@ -205,6 +205,32 @@ demo()
 
 ## 关于 Cookie
 
+### 浏览器扫码登录（新增）
+
+项目提供可选的抖音浏览器扫码登录入口。安装浏览器登录依赖后，在主菜单选择“浏览器扫码登录获取 Cookie (抖音)”，程序会打开独立 Chromium 窗口；完成验证码和扫码后，Cookie 会自动写入项目配置，浏览器资料保存在 `Volume/DouYinBrowserProfile`。
+
+```bash
+uv sync --extra browser-login
+uv run playwright install chromium
+```
+
+### 指定作者关键词搜索（新增）
+
+Web API 模式新增 `POST /douyin/search/creator`，按作者数字 UID 搜索该作者作品中的关键词：
+
+```json
+{
+  "keyword": "健康",
+  "from_user": "98569634382",
+  "pages": 1,
+  "offset": 0,
+  "count": 10,
+  "cookie": ""
+}
+```
+
+`from_user` 是作者数字 UID，不是 `sec_user_id`；响应沿用项目 `DataResponse` 格式。请遵守抖音平台条款及素材版权要求。
+
 [点击查看 Cookie 获取教程](https://github.com/JoeanAmier/TikTokDownloader/blob/master/docs/Cookie%E8%8E%B7%E5%8F%96%E6%95%99%E7%A8%8B.md)
 
 > * Cookie 仅需在失效后重新写入配置文件，并非每次运行程序都要写入配置文件！

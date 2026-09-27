@@ -138,3 +138,17 @@ class UserSearch(BaseSearch):
 
 class LiveSearch(BaseSearch):
     channel: Literal[3,] = 3
+
+
+class CreatorSearch(BaseSearch):
+    from_user: str
+    sort_type: Literal[0, 1, 2] = 0
+    publish_time: Literal[0, 1, 7, 180] = 0
+
+    @field_validator("from_user", mode="before")
+    @classmethod
+    def from_user_validator(cls, value: str | int) -> str:
+        value = str(value).strip()
+        if not value.isdigit():
+            raise ValueError(_("from_user 参数应为抖音账号数字 UID"))
+        return value

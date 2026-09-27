@@ -17,6 +17,7 @@ from .format import (
 from .get_ua import get_ua_sync
 from .list_pop import safe_pop
 from .progress import FakeProgress
+from .playwright_login import DouYinBrowserLogin
 from .rename_compatible import RenameCompatible
 from .retry import Retry
 from .session import (
@@ -56,6 +57,7 @@ __all__ = [
     "truncate_string",
     "RenameCompatible",
     "FakeProgress",
+    "DouYinBrowserLogin",
     "load_objects_from_external_py",
     "is_node_available",
 ]

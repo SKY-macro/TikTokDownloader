@@ -1,5 +1,6 @@
 from .response import DataResponse, UrlResponse
 from .search import (
+    CreatorSearch,
     GeneralSearch,
     VideoSearch,
     UserSearch,
@@ -16,6 +17,7 @@ from .live import Live, LiveTikTok
 
 __all__ = (
     "GeneralSearch",
+    "CreatorSearch",
     "VideoSearch",
     "UserSearch",
     "LiveSearch",

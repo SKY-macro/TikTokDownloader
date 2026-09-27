@@ -29,6 +29,7 @@ from src.record import BaseLogger, LoggerManager
 from src.tools import (
     # Browser,
     ColorfulConsole,
+    DouYinBrowserLogin,
     DownloaderError,
     RenameCompatible,
     choose,
@@ -112,6 +113,7 @@ class TikTokDownloader:
         self.__function_menu = (
             (_("手动输入 Cookie (抖音)"), self.write_cookie_input),
             (_("从剪贴板读取 Cookie (抖音)"), self.write_cookie_paste),
+            (_("浏览器扫码登录获取 Cookie (抖音)"), self.browser_login_cookie),
             # (_("从浏览器读取 Cookie (抖音)"), self.browser_cookie),
             # (_("扫码登录获取 Cookie (抖音)"), self.auto_cookie),
             (_("手动输入 Cookie (TikTok)"), self.write_cookie_input_tiktok),
@@ -337,6 +339,13 @@ class TikTokDownloader:
 
     async def write_cookie_input_tiktok(self):
         await self.__write_cookie(False, True)
+
+    async def browser_login_cookie(self):
+        profile = self.parameter.ROOT.joinpath("DouYinBrowserProfile")
+        if cookie := await DouYinBrowserLogin(self.console, profile).run():
+            self.cookie.save_cookie(cookie)
+            self.console.print(_("写入抖音 Cookie 成功！"))
+            await self.check_settings()
 
     async def __write_cookie(self, read: bool = True, tiktok: bool = False):
         self.console.print(

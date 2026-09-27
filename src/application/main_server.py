@@ -17,6 +17,7 @@ from ..models import (
     Account,
     AccountTiktok,
     Comment,
+    CreatorSearch as CreatorSearchModel,
     DataResponse,
     Detail,
     DetailTikTok,
@@ -35,6 +36,7 @@ from ..models import (
 )
 from ..translation import _
 from .main_terminal import TikTok
+from ..interface import CreatorSearch
 
 if TYPE_CHECKING:
     from ..config import Parameter
@@ -390,6 +392,46 @@ class APIServer(TikTok):
                 count=extract.count,
                 source=extract.source,
             ):
+                return self.success_response(extract, data)
+            return self.failed_response(extract)
+
+        @self.server.post(
+            "/douyin/search/creator",
+            summary=_("搜索指定抖音账号的作品"),
+            description=_(
+                dedent("""
+                **参数**:
+
+                - **cookie**: 抖音 Cookie；可选参数
+                - **proxy**: 代理；可选参数
+                - **keyword**: 关键词；必需参数
+                - **from_user**: 作者数字 UID；必需参数
+                - **offset**: 起始游标；可选参数
+                - **count**: 每页数量；可选参数
+                - **pages**: 最大请求页数；可选参数
+                - **sort_type**: 排序依据；可选参数
+                - **publish_time**: 发布时间；可选参数
+                """)
+            ),
+            tags=[_("抖音")],
+            response_model=DataResponse,
+        )
+        async def handle_search_creator(
+            extract: CreatorSearchModel, token: str = Depends(token_dependency)
+        ):
+            data = await CreatorSearch(
+                self.parameter,
+                cookie=extract.cookie,
+                proxy=extract.proxy,
+                keyword=extract.keyword,
+                from_user=extract.from_user,
+                pages=extract.pages,
+                offset=extract.offset,
+                count=extract.count,
+                sort_type=extract.sort_type,
+                publish_time=extract.publish_time,
+            ).run()
+            if data and any(data):
                 return self.success_response(extract, data)
             return self.failed_response(extract)
 
